@@ -2,7 +2,7 @@ import pygame
 from menu import *
 
 
-class Game():
+class Game:
     def __init__(self):
         pygame.init()
         self.running, self.playing = True, False
