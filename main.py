@@ -3,18 +3,10 @@ import random
 import os
 import sys
 
+from game import Game
 
-class StartWindow(pygame.sprite.Sprite):
-    pass
+g = Game()
 
-
-class Menu(pygame.sprite.Sprite):
-    pass
-
-
-class Game(pygame.sprite.Sprite):
-    pass
-
-
-class Pause(pygame.sprite.Sprite):
-    pass
+while g.running:
+    g.curr_menu.display_menu()
+    g.game_loop()
