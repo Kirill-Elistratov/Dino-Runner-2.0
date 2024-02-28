@@ -121,6 +121,29 @@ class OptionsMenu(Menu):
                 else:
                     self.music_state = 'on'
                     menu_sound.play(-1)
+            elif self.state == 'Controls':
+                self.game.curr_menu = self.game.controls
+                self.run_display = False
+
+
+
+class ControlsMenu(Menu):
+    def __init__(self, game):
+        Menu.__init__(self, game)
+
+    def display_menu(self):
+        self.run_display = True
+        while self.run_display:
+            self.game.check_events()
+            if self.game.BACK_KEY:
+                self.game.curr_menu = self.game.main_menu
+                self.run_display = False
+            self.game.display.fill(self.game.BLACK)
+            self.game.draw_text('Press Up to Jump', 20, self.game.DISPLAY_W / 2,
+                                self.game.DISPLAY_H / 2 - 20)
+            self.game.draw_text('Press Backspace to Return', 20, self.game.DISPLAY_W / 2,
+                                self.game.DISPLAY_H / 2 + 10)
+            self.blit_screen()
 
 
 class SecretMenu(Menu):
@@ -154,6 +177,7 @@ class Game:
         self.main_menu = MainMenu(self)
         self.options = OptionsMenu(self)
         self.credits = SecretMenu(self)
+        self.controls = ControlsMenu(self)
         self.curr_menu = self.main_menu
         menu_sound.play(-1)
 
