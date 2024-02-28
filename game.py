@@ -14,7 +14,7 @@ class Game():
         self.BLACK, self.WHITE = (0, 0, 0), (255, 255, 255)
         self.main_menu = MainMenu(self)
         self.options = OptionsMenu(self)
-        self.credits = SkinsMenu(self)
+        self.credits = SecretMenu(self)
         self.curr_menu = self.main_menu
 
     def game_loop(self):

@@ -1,7 +1,8 @@
+import pygame.mixer
 import pygame
 
 
-class Menu():
+class Menu:
     def __init__(self, game):
         self.game = game
         self.mid_w, self.mid_h = self.game.DISPLAY_W / 2, self.game.DISPLAY_H / 2
@@ -24,7 +25,7 @@ class MainMenu(Menu):
         self.state = "Start"
         self.startx, self.starty = self.mid_w, self.mid_h + 30
         self.optionsx, self.optionsy = self.mid_w, self.mid_h + 50
-        self.skinsx, self.skinsy = self.mid_w, self.mid_h + 70
+        self.secretx, self.secrety = self.mid_w, self.mid_h + 70
         self.cursor_rect.midtop = (self.startx + self.offset, self.starty)
 
     def display_menu(self):
@@ -33,10 +34,10 @@ class MainMenu(Menu):
             self.game.check_events()
             self.check_input()
             self.game.display.fill(self.game.BLACK)
-            self.game.draw_text('Main Menu', 20, self.game.DISPLAY_W / 2, 20)
-            self.game.draw_text("Start Game", 20, self.startx, self.starty)
-            self.game.draw_text("Options", 20, self.optionsx, self.optionsy)
-            self.game.draw_text("Skins", 20, self.skinsx, self.skinsy)
+            self.game.draw_text('Dino Runner 2', 20, self.game.DISPLAY_W / 2, 20)
+            self.game.draw_text("Start game", 20, self.startx, self.starty)
+            self.game.draw_text("options", 20, self.optionsx, self.optionsy)
+            self.game.draw_text("secret", 20, self.secretx, self.secrety)
             self.draw_cursor()
             self.blit_screen()
 
@@ -46,19 +47,19 @@ class MainMenu(Menu):
                 self.cursor_rect.midtop = (self.optionsx + self.offset, self.optionsy)
                 self.state = 'Options'
             elif self.state == 'Options':
-                self.cursor_rect.midtop = (self.skinsx + self.offset, self.skinsy)
-                self.state = 'Skins'
-            elif self.state == 'Skins':
+                self.cursor_rect.midtop = (self.secretx + self.offset, self.secrety)
+                self.state = 'secret'
+            elif self.state == 'secret':
                 self.cursor_rect.midtop = (self.startx + self.offset, self.starty)
                 self.state = 'Start'
         elif self.game.UP_KEY:
             if self.state == 'Start':
-                self.cursor_rect.midtop = (self.skinsx + self.offset, self.skinsy)
-                self.state = 'Skins'
+                self.cursor_rect.midtop = (self.secretx + self.offset, self.secrety)
+                self.state = 'secret'
             elif self.state == 'Options':
                 self.cursor_rect.midtop = (self.startx + self.offset, self.starty)
                 self.state = 'Start'
-            elif self.state == 'Skins':
+            elif self.state == 'secret':
                 self.cursor_rect.midtop = (self.optionsx + self.offset, self.optionsy)
                 self.state = 'Options'
 
@@ -66,10 +67,10 @@ class MainMenu(Menu):
         self.move_cursor()
         if self.game.START_KEY:
             if self.state == 'Start':
-                self.game.playing = True
+                self.game.game_loop()
             elif self.state == 'Options':
                 self.game.curr_menu = self.game.options
-            elif self.state == 'Skins':
+            elif self.state == 'secret':
                 self.game.curr_menu = self.game.credits
             self.run_display = False
 
@@ -77,10 +78,11 @@ class MainMenu(Menu):
 class OptionsMenu(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
-        self.state = 'Volume'
-        self.volx, self.voly = self.mid_w, self.mid_h + 20
+        self.state = 'Music'
+        self.music_state = 'on'
+        self.musicx, self.musicy = self.mid_w, self.mid_h + 15
         self.controlsx, self.controlsy = self.mid_w, self.mid_h + 40
-        self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
+        self.cursor_rect.midtop = (self.musicx + self.offset, self.musicy)
 
     def display_menu(self):
         self.run_display = True
@@ -89,7 +91,7 @@ class OptionsMenu(Menu):
             self.check_input()
             self.game.display.fill((0, 0, 0))
             self.game.draw_text('Options', 20, self.game.DISPLAY_W / 2, self.game.DISPLAY_H / 2 - 30)
-            self.game.draw_text("Volume", 15, self.volx, self.voly)
+            self.game.draw_text(f"Music {self.music_state}", 15, self.musicx + self.offset + 100, self.musicy)
             self.game.draw_text("Controls", 15, self.controlsx, self.controlsy)
             self.draw_cursor()
             self.blit_screen()
@@ -99,17 +101,17 @@ class OptionsMenu(Menu):
             self.game.curr_menu = self.game.main_menu
             self.run_display = False
         elif self.game.UP_KEY or self.game.DOWN_KEY:
-            if self.state == 'Volume':
+            if self.state == 'Music':
                 self.state = 'Controls'
                 self.cursor_rect.midtop = (self.controlsx + self.offset, self.controlsy)
             elif self.state == 'Controls':
-                self.state = 'Volume'
-                self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
+                self.state = 'Music'
+                self.cursor_rect.midtop = (self.musicx + self.offset, self.musicy)
         elif self.game.START_KEY:
             pass
 
 
-class SkinsMenu(Menu):
+class SecretMenu(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
 
@@ -117,10 +119,11 @@ class SkinsMenu(Menu):
         self.run_display = True
         while self.run_display:
             self.game.check_events()
-            if self.game.START_KEY or self.game.BACK_KEY:
+            if self.game.BACK_KEY:
                 self.game.curr_menu = self.game.main_menu
                 self.run_display = False
             self.game.display.fill(self.game.BLACK)
-            self.game.draw_text('Nothing', 20, self.game.DISPLAY_W / 2, self.game.DISPLAY_H / 2 - 20)
-            self.game.draw_text('Will be soon', 15, self.game.DISPLAY_W / 2, self.game.DISPLAY_H / 2 + 10)
+            self.game.draw_text('It is a very big secret of this game', 20, self.game.DISPLAY_W / 2,
+                                self.game.DISPLAY_H / 2 - 20)
+            self.game.draw_text('Try to know it', 15, self.game.DISPLAY_W / 2, self.game.DISPLAY_H / 2 + 10)
             self.blit_screen()
