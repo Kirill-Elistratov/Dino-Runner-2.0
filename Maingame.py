@@ -187,3 +187,33 @@ class Bird(Obstacle):
                 self.index = 0
             self.index += 0.5
         SCREEN.blit(self.image[int(self.index // 5)], self.rect)
+
+
+def main():
+    global game_speed, x_pos_bg, y_pos_bg, points, obstacles
+    run = True
+    clock = pygame.time.Clock()
+    player = Dinosaur()
+    cloud = Cloud()
+    game_speed = 10
+    x_pos_bg = 0
+    y_pos_bg = 380
+    points = 0
+    font = pygame.font.Font('freesansbold.ttf', 20)
+    obstacles = []
+    death_count = 0
+
+    def score(is_dead):
+        global points, game_speed
+
+        if not is_dead:
+            points += 1
+            if points % 500 == 0:
+                points_sound.play()
+            if points % 100 == 0:
+                game_speed += 0.5
+
+        text = font.render("Points: " + str(int(points)), True, (0, 0, 0))
+        textRect = text.get_rect()
+        textRect.center = (1000, 40)
+        SCREEN.blit(text, textRect)
