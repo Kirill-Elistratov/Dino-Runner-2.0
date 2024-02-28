@@ -39,3 +39,84 @@ RESET_ARROW = pygame.image.load(os.path.join("data/Default_dino/Other", "Reset.p
 jump_sound = pygame.mixer.Sound('data/Default_dino/Sounds/jump_sound.mp3')
 death_sound = pygame.mixer.Sound('data/Default_dino/Sounds/death_sound.mp3')
 points_sound = pygame.mixer.Sound('data/Default_dino/Sounds/reached.mp3')
+
+
+class Dinosaur:
+    X_POS = 80
+    Y_POS = 310
+    Y_POS_DUCK = 340
+    JUMP_VEL = 6.5
+
+    def __init__(self):
+        self.duck_img = DUCKING
+        self.run_img = RUNNING
+        self.jump_img = JUMPING
+        self.dead_img = DEAD
+
+        self.dino_duck = False
+        self.dino_run = True
+        self.dino_jump = False
+        self.dino_dead = False
+
+        self.step_index = 0
+        self.jump_vel = self.JUMP_VEL
+        self.image = self.run_img[0]
+        self.dino_rect = self.image.get_rect()
+        self.dino_rect.x = self.X_POS
+        self.dino_rect.y = self.Y_POS
+
+    def update(self, userInput):
+        if not self.dino_dead:
+            if self.dino_duck:
+                self.duck()
+            elif self.dino_run:
+                self.run()
+            elif self.dino_jump:
+                self.jump()
+        else:
+            self.image = self.dead_img
+        if userInput[pygame.K_UP] and not self.dino_jump and not self.dino_dead:
+            self.dino_duck = False
+            self.dino_run = False
+            self.dino_jump = True
+            jump_sound.play()
+        elif userInput[pygame.K_DOWN] and not self.dino_jump and not self.dino_dead:
+            self.dino_duck = True
+            self.dino_run = False
+            self.dino_jump = False
+        elif not (self.dino_jump or userInput[pygame.K_DOWN]):
+            self.dino_duck = False
+            self.dino_run = True
+            self.dino_jump = False
+
+    def duck(self):
+        if self.step_index // 5 < len(self.duck_img):
+            self.image = self.duck_img[self.step_index // 5]
+            self.dino_rect = self.image.get_rect()
+            self.dino_rect.x = self.X_POS
+            self.dino_rect.y = self.Y_POS_DUCK
+            self.step_index += 1
+        else:
+            self.step_index = 0
+
+    def run(self):
+        if self.step_index // 5 < len(self.run_img):
+            self.image = self.run_img[self.step_index // 5]
+            self.dino_rect = self.image.get_rect()
+            self.dino_rect.x = self.X_POS
+            self.dino_rect.y = self.Y_POS
+            self.step_index += 1
+        else:
+            self.step_index = 0
+
+    def jump(self):
+        self.image = self.jump_img
+        if self.dino_jump:
+            self.dino_rect.y -= self.jump_vel * 4
+            self.jump_vel -= 0.45
+        if self.jump_vel < - self.JUMP_VEL:
+            self.dino_jump = False
+            self.jump_vel = self.JUMP_VEL
+
+    def draw(self, SCREEN):
+        SCREEN.blit(self.image, (self.dino_rect.x, self.dino_rect.y))
