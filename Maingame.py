@@ -244,3 +244,34 @@ def main():
 
         player.draw(SCREEN)
         player.update(userInput)
+
+        if not player.dino_dead and len(obstacles) == 0:
+            if random.randint(0, 2) == 0:
+                obstacles.append(SmallCactus(SMALL_CACTUS))
+            elif random.randint(0, 2) == 1:
+                obstacles.append(LargeCactus(LARGE_CACTUS))
+            elif random.randint(0, 2) == 2:
+                obstacles.append(Bird(BIRD))
+
+        for obstacle in obstacles:
+            obstacle.draw(SCREEN)
+            obstacle.update(player.dino_dead)
+            if not player.dino_dead and player.dino_rect.colliderect(obstacle.rect):
+                death_count += 1
+                player.dino_dead = True
+                death_sound.play()
+        if player.dino_dead:
+            game_over_rect = GAME_OVER.get_rect()
+            game_over_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 30)
+            SCREEN.blit(GAME_OVER, game_over_rect)
+            reset_rect = RESET_ARROW.get_rect()
+            reset_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 45)
+            SCREEN.blit(RESET_ARROW, reset_rect)
+
+        score(player.dino_dead)
+        cloud.update(player.dino_dead)
+        background(player.dino_dead)
+        cloud.draw(SCREEN)
+
+    clock.tick(60)
+    pygame.display.update()
