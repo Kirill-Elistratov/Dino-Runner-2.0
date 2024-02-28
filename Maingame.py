@@ -217,3 +217,30 @@ def main():
         textRect = text.get_rect()
         textRect.center = (1000, 40)
         SCREEN.blit(text, textRect)
+
+    def background(is_dead):
+        global x_pos_bg, y_pos_bg
+        image_width = BG.get_width()
+        SCREEN.blit(BG, (x_pos_bg, y_pos_bg))
+        SCREEN.blit(BG, (image_width + x_pos_bg, y_pos_bg))
+        if not is_dead:
+            if x_pos_bg <= -image_width:
+                SCREEN.blit(BG, (image_width + x_pos_bg, y_pos_bg))
+                x_pos_bg = 0
+            x_pos_bg -= game_speed
+
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if reset_rect.collidepoint(event.pos):
+                    main()
+            if event.type == pygame.QUIT:
+                run = False
+                pygame.quit()
+                quit()
+
+        SCREEN.fill((255, 255, 255))
+        userInput = pygame.key.get_pressed()
+
+        player.draw(SCREEN)
+        player.update(userInput)
