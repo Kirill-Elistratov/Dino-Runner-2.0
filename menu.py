@@ -1,6 +1,10 @@
 import pygame.mixer
 import pygame
+
 from Maingame import menu
+
+click_sound = pygame.mixer.Sound('click_sound.mp3')
+menu_sound = pygame.mixer.Sound('menu_sound.mp3')
 
 
 class Menu:
@@ -68,6 +72,7 @@ class MainMenu(Menu):
         self.move_cursor()
         if self.game.START_KEY:
             if self.state == 'Start':
+                menu_sound.stop()
                 self.game.game_loop()
             elif self.state == 'Options':
                 self.game.curr_menu = self.game.options
@@ -109,7 +114,13 @@ class OptionsMenu(Menu):
                 self.state = 'Music'
                 self.cursor_rect.midtop = (self.musicx + self.offset, self.musicy)
         elif self.game.START_KEY:
-            pass
+            if self.state == 'Music':
+                if self.music_state == 'on':
+                    self.music_state = 'off'
+                    menu_sound.stop()
+                else:
+                    self.music_state = 'on'
+                    menu_sound.play(-1)
 
 
 class SecretMenu(Menu):
@@ -144,6 +155,7 @@ class Game:
         self.options = OptionsMenu(self)
         self.credits = SecretMenu(self)
         self.curr_menu = self.main_menu
+        menu_sound.play(-1)
 
     def game_loop(self):
         pygame.display.set_mode((1100, 600))
@@ -159,6 +171,7 @@ class Game:
                 self.curr_menu.run_display = False
                 pygame.quit()
             if event.type == pygame.KEYDOWN:
+                click_sound.play()
                 if event.key == pygame.K_RETURN:
                     self.START_KEY = True
                 if event.key == pygame.K_BACKSPACE:
