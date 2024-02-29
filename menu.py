@@ -126,7 +126,6 @@ class OptionsMenu(Menu):
                 self.run_display = False
 
 
-
 class ControlsMenu(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
@@ -141,8 +140,10 @@ class ControlsMenu(Menu):
             self.game.display.fill(self.game.BLACK)
             self.game.draw_text('Press Up to Jump', 20, self.game.DISPLAY_W / 2,
                                 self.game.DISPLAY_H / 2 - 20)
-            self.game.draw_text('Press Backspace to Return', 20, self.game.DISPLAY_W / 2,
+            self.game.draw_text('Press Down to Duck', 20, self.game.DISPLAY_W / 2,
                                 self.game.DISPLAY_H / 2 + 10)
+            self.game.draw_text('Press to arrow to restart the game', 20, self.game.DISPLAY_W / 2,
+                                self.game.DISPLAY_H / 2 + 40)
             self.blit_screen()
 
 
